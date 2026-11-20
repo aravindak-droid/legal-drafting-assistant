@@ -1,4 +1,5 @@
 """Your code. One stub per milestone; build them in order and keep each one small."""
+from collections import Counter, defaultdict
 import re
 
 DEFAULT_LEGAL_CORPUS = [
@@ -27,8 +28,44 @@ def milestone_1(corpus: list[str] | None = None) -> list[list[str]]:
 
 
 # --- Milestone 2: Implement the n-gram next-word predictor.
-def milestone_2():  # TODO(milestone 2)
-    raise NotImplementedError("TODO(milestone 2)")
+class NGramPredictor:
+    def __init__(self, n: int = 2):
+        self.n = n
+        self.counts: dict[tuple[str, ...], Counter] = defaultdict(Counter)
+
+    def train(self, tokenized_corpus: list[list[str]]) -> None:
+        for tokens in tokenized_corpus:
+            for i in range(len(tokens) - self.n + 1):
+                context = tuple(tokens[i : i + self.n - 1])
+                next_word = tokens[i + self.n - 1]
+                self.counts[context][next_word] += 1
+
+    def predict_next(self, prefix_tokens: list[str]) -> str:
+        context = tuple(prefix_tokens[-(self.n - 1) :])
+        candidates = self.counts.get(context)
+        if not candidates:
+            return "shall"
+        return candidates.most_common(1)[0][0]
+
+    def generate(self, prompt: str, max_words: int = 12) -> str:
+        cleaned = re.sub(r"[^a-zA-Z0-9\s]", "", prompt.lower()).strip()
+        tokens = ["<s>"] + cleaned.split()
+        for _ in range(max_words):
+            next_tok = self.predict_next(tokens)
+            if next_tok == "</s>":
+                break
+            tokens.append(next_tok)
+        output_words = [t for t in tokens if t not in ("<s>", "</s>")]
+        return " ".join(output_words).capitalize() + "."
+
+
+def milestone_2(prompt: str = "This agreement", n: int = 2, max_words: int = 12) -> tuple[NGramPredictor, str]:
+    """Train an n-gram model on the legal corpus and generate a legal sentence."""
+    corpus = milestone_1()
+    predictor = NGramPredictor(n=n)
+    predictor.train(corpus)
+    generated = predictor.generate(prompt, max_words=max_words)
+    return predictor, generated
 
 
 # --- Milestone 3: Load the pre-trained GPT-2 model and fine-tuned adapter for legal clause tagging.
