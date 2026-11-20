@@ -1,30 +1,46 @@
 """Your code. One stub per milestone; build them in order and keep each one small."""
+import re
+
+DEFAULT_LEGAL_CORPUS = [
+    "This Agreement shall be governed by and construed in accordance with the laws of the State.",
+    "The Receiving Party shall hold and maintain the Confidential Information in strictest confidence.",
+    "Neither party shall be liable for any indirect, incidental, special, or consequential damages.",
+    "Either party may terminate this Agreement upon thirty days prior written notice to the other party.",
+    "The Vendor agrees to indemnify, defend, and hold harmless the Client from any and all claims.",
+    "All notices required under this Agreement shall be in writing and delivered to the address specified.",
+    "This Agreement constitutes the entire understanding between the parties and supersedes all prior agreements.",
+    "Payment of all undisputed invoices shall be due within thirty days from the receipt of invoice.",
+]
+
 
 # --- Milestone 1: Prepare a small legal text corpus for n-gram training.
-# Hint: Use techniques from 'Build a Next-Word Predictor from Scratch' to process your corpus.
-def milestone_1():  # TODO(milestone 1)
-    raise NotImplementedError("TODO(milestone 1)")
+def milestone_1(corpus: list[str] | None = None) -> list[list[str]]:
+    """Clean and tokenize a legal text corpus into sentences of lowercase word tokens."""
+    raw_sentences = corpus if corpus is not None else DEFAULT_LEGAL_CORPUS
+    tokenized_corpus: list[list[str]] = []
+    for sentence in raw_sentences:
+        cleaned = re.sub(r"[^a-zA-Z0-9\s]", "", sentence.lower()).strip()
+        tokens = [tok for tok in cleaned.split() if tok]
+        if tokens:
+            tokenized_corpus.append(["<s>"] + tokens + ["</s>"])
+    return tokenized_corpus
 
 
 # --- Milestone 2: Implement the n-gram next-word predictor.
-# Hint: Apply the n-gram model logic from 'Build a Next-Word Predictor from Scratch' to predict words.
 def milestone_2():  # TODO(milestone 2)
     raise NotImplementedError("TODO(milestone 2)")
 
 
 # --- Milestone 3: Load the pre-trained GPT-2 model and fine-tuned adapter for legal clause tagging.
-# Hint: Load the models as described in 'Fine-Tune GPT-2 to Tag Legal Contract Clauses'.
 def milestone_3():  # TODO(milestone 3)
     raise NotImplementedError("TODO(milestone 3)")
 
 
 # --- Milestone 4: Create a CLI interface to generate text and then classify the generated text.
-# Hint: Design a user-friendly command-line interface to interact with both models.
 def milestone_4():  # TODO(milestone 4)
     raise NotImplementedError("TODO(milestone 4)")
 
 
 # --- Milestone 5: Evaluate classification accuracy on example clauses.
-# Hint: Compare your model's predictions to a set of known clause types, similar to evaluation in 'Fine-Tune GPT-2 to Tag Legal Contract Clauses'.
 def milestone_5():  # TODO(milestone 5)
     raise NotImplementedError("TODO(milestone 5)")
