@@ -68,3 +68,10 @@ def milestone_3(epochs: int = 8) -> LegalClauseClassifier:
     classifier = LegalClauseClassifier(model_name="gpt2")
     classifier.fine_tune(epochs=epochs)
     return classifier
+
+def milestone_4(prompt: str = "This agreement", max_words: int = 12, classifier: LegalClauseClassifier | None = None) -> dict[str, str]:
+    """Generate a legal sentence via n-gram prediction and classify its clause type with GPT-2."""
+    _, generated_sentence = milestone_2(prompt=prompt, n=2, max_words=max_words)
+    clf = classifier if classifier is not None else milestone_3(epochs=6)
+    clause_type = clf.predict(generated_sentence)
+    return {"sentence": generated_sentence, "clause_type": clause_type}
