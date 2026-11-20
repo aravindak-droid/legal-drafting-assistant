@@ -75,3 +75,26 @@ def milestone_4(prompt: str = "This agreement", max_words: int = 12, classifier:
     clf = classifier if classifier is not None else milestone_3(epochs=6)
     clause_type = clf.predict(generated_sentence)
     return {"sentence": generated_sentence, "clause_type": clause_type}
+def milestone_5(classifier: LegalClauseClassifier | None = None) -> dict[str, object]:
+    """Evaluate GPT-2 clause classification accuracy on example legal clauses."""
+    clf = classifier if classifier is not None else milestone_3(epochs=10)
+    eval_samples = [
+        ("This Agreement shall be governed by the laws of the State.", "Governing Law"),
+        ("The Receiving Party shall keep all Confidential Information secret.", "Confidentiality"),
+        ("Neither party shall be liable for consequential damages.", "Limitation of Liability"),
+        ("Either party may terminate this Agreement upon thirty days notice.", "Termination"),
+        ("The Vendor agrees to indemnify and hold harmless the Client.", "Indemnification"),
+        ("All notices under this Agreement shall be in writing.", "Notices"),
+        ("This Agreement constitutes the entire understanding between the parties.", "Entire Agreement"),
+        ("Payment of undisputed invoices shall be due within thirty days.", "Payment Terms"),
+    ]
+    correct = 0
+    results = []
+    for text, expected in eval_samples:
+        predicted = clf.predict(text)
+        is_correct = predicted == expected
+        if is_correct:
+            correct += 1
+        results.append({"text": text, "expected": expected, "predicted": predicted, "correct": is_correct})
+    accuracy = correct / len(eval_samples)
+    return {"accuracy": accuracy, "correct": correct, "total": len(eval_samples), "results": results}
